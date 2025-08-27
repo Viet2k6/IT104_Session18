@@ -9,22 +9,36 @@ import './TaskManager.css';
 function TaskManager() {
   const [tasks, dispatch] = useReducer(taskReducer, []);
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+
   useEffect(() => {
     const stored = localStorage.getItem('tasks');
-    if (stored) {
-      try {
-        const parsed: Task[] = JSON.parse(stored);
-        dispatch({ type: 'INIT_TASKS', payload: parsed });
-      } catch (error) {
-        console.error('Lỗi khi parse dữ liệu từ localStorage:', error);
+    let parsed: Task[] = [];
+
+    try {
+      if (stored) {
+        parsed = JSON.parse(stored);
       }
+    } catch (error) {
+      console.error('Lỗi khi parse dữ liệu từ localStorage:', error);
+    }
+
+    if (!stored || parsed.length === 0) {
+      const defaultTasks: Task[] = [
+        { id: 1, name: 'Quét nhà' },
+        { id: 2, name: 'Giặt quần áo' },
+        { id: 3, name: 'Code' },
+      ];
+      localStorage.setItem('tasks', JSON.stringify(defaultTasks));
+      dispatch({ type: 'INIT_TASKS', payload: defaultTasks });
+    } else {
+      dispatch({ type: 'INIT_TASKS', payload: parsed });
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
-  
+
   const handleDeleteRequest = (id: number) => {
     setPendingDeleteId(id);
   };

@@ -9,11 +9,21 @@ function TaskList({
   onDeleteRequest: (id: number) => void;
 }) {
   return (
-    <ul className="task-list">
-      {tasks.map(task => (
-        <TaskItem key={task.id} task={task} onDeleteRequest={onDeleteRequest} />
-      ))}
-    </ul>
+    <div>
+      {tasks.length === 0 ? (
+        <p className="empty-message">Không có công việc nào.</p>
+      ) : (
+        <ul className="task-list">
+          {tasks.map(task => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onDeleteRequest={onDeleteRequest}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
